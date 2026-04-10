@@ -8,40 +8,40 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                git 'https://github.com/chalesraj06-source/MY-FIRST-PROJECT.git'
+                git branch: 'main', url: 'https://github.com/chalesraj06-source/MY-FIRST-PROJECT.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                sh "docker build -t ${IMAGE_NAME} ."
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                sh '''
-                docker stop $CONTAINER_NAME || true
-                docker rm $CONTAINER_NAME || true
-                '''
+                sh """
+                docker stop ${CONTAINER_NAME} || true
+                docker rm ${CONTAINER_NAME} || true
+                """
             }
         }
 
         stage('Run New Container') {
             steps {
-                sh 'docker run -d -p 8081:80 --name $CONTAINER_NAME $IMAGE_NAME'
+                sh "docker run -d -p 8081:80 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
             }
         }
     }
 
     post {
         success {
-            echo '✅ Deployment Successful!'
+            echo "✅ Deployment Successful!"
         }
         failure {
-            echo '❌ Deployment Failed!'
+            echo "❌ Deployment Failed!"
         }
     }
 }
